@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: encryption-secret
+type: Opaque
+data:
+  SYMMETRIC_KEY: <secret_base_64> # Change this to base 64 converted secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: encryption-app
+  labels:
+    app: encryption-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: encryption-app
+  template:
+    metadata:
+      labels:
+        app: encryption-app
+    spec:
+      containers:
+        - name: encryption-container
+          image: <encryption_image> # Change this to the encryption image to be used
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KEY
+              valueFrom:
+                secretKeyRef:
+                  name: encryption-secret
+                  key: SYMMETRIC_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: encryption-app
+  labels:
+    app: encryption-app
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: encryption-app

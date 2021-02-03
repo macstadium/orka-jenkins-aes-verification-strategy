@@ -1,0 +1,9 @@
+{
+    "name": "encryption-service",
+    "version": "0.0.1",
+    "main": "server.js",
+    "dependencies": {
+        "crypto-js": "^4.0.0",
+        "express": "^4.17.1"
+    }
+}
